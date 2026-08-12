@@ -1,11 +1,11 @@
-# Hi_Hysteria (hihy)
+# tytysteria (hihy)
 
 一键 **Hysteria2** 服务端管理脚本。本仓库是 [emptysuns/Hi_Hysteria](https://github.com/emptysuns/Hi_Hysteria)(原作者已删库)的可用重建版本 —— 修复了失效的自更新与 i18n 语言文件下载源,默认中文。
 
 ## 安装 / 运行
 
 ```bash
-bash <(curl -fsSL https://raw.githubusercontent.com/chenlee86/Hi_Hysteria/refs/heads/main/server/hy2.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/chenlee86/tytysteria/refs/heads/main/server/ty.sh)
 ```
 
 安装后可直接用 `hihy` 命令唤起菜单。
@@ -24,7 +24,7 @@ bash <(curl -fsSL https://raw.githubusercontent.com/chenlee86/Hi_Hysteria/refs/h
 
 ## 结构
 
-- `server/hy2.sh` —— 主脚本(自更新 + 首启会从本仓库拉取)
+- `server/ty.sh` —— 主脚本(自更新 + 首启会从本仓库拉取)
 - `server/i18n/{zh,en}.json` —— 界面文案(schema_version=1)
 
 ## 语言

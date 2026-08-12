@@ -16,8 +16,8 @@ HIHY_BIN_LINK="${HIHY_BIN_LINK:-/usr/bin/hihy}"
 HIHY_YQ_BIN="${HIHY_YQ_BIN:-/usr/bin/yq}"
 HIHY_PID_FILE="${HIHY_PID_FILE:-/var/run/hihy.pid}"
 HIHY_RC_LOCAL="${HIHY_RC_LOCAL:-/etc/rc.local}"
-HIHY_REMOTE_SCRIPT_URL="${HIHY_REMOTE_SCRIPT_URL:-https://raw.githubusercontent.com/chenlee86/Hi_Hysteria/refs/heads/main/server/hy2.sh}"
-HIHY_REMOTE_SCRIPT_MIRROR_URL="${HIHY_REMOTE_SCRIPT_MIRROR_URL:-https://cdn.jsdelivr.net/gh/chenlee86/Hi_Hysteria@main/server/hy2.sh}"
+HIHY_REMOTE_SCRIPT_URL="${HIHY_REMOTE_SCRIPT_URL:-https://raw.githubusercontent.com/chenlee86/tytysteria/refs/heads/main/server/ty.sh}"
+HIHY_REMOTE_SCRIPT_MIRROR_URL="${HIHY_REMOTE_SCRIPT_MIRROR_URL:-https://cdn.jsdelivr.net/gh/chenlee86/tytysteria@main/server/ty.sh}"
 HIHY_VERSION_STATUS_FILE="${HIHY_VERSION_STATUS_FILE:-$HIHY_ROOT_DIR/result/version-check.state}"
 HIHY_VERSION_CHECK_LOCK_FILE="${HIHY_VERSION_CHECK_LOCK_FILE:-$HIHY_ROOT_DIR/result/version-check.lock}"
 HIHY_VERSION_CHECK_TTL="${HIHY_VERSION_CHECK_TTL:-21600}"
@@ -55,10 +55,10 @@ getI18nSchemaVersion() {
 
 refreshI18nFile() {
     local lang="$1"
-    local base_url="https://raw.githubusercontent.com/chenlee86/Hi_Hysteria/refs/heads/main"
+    local base_url="https://raw.githubusercontent.com/chenlee86/tytysteria/refs/heads/main"
     mkdir -p "$HIHY_I18N_DIR"
     local url="${base_url}/server/i18n/${lang}.json"
-    local out="${HIHY_I18N_DIR}/hy2.sh.${lang}.json"
+    local out="${HIHY_I18N_DIR}/ty.sh.${lang}.json"
     if command -v wget >/dev/null 2>&1; then
         wget -q --no-check-certificate -O "$out" "$url" 2>/dev/null
     elif command -v curl >/dev/null 2>&1; then
@@ -70,7 +70,7 @@ refreshI18nFile() {
 # 下载失败或内容非法则清掉半成品,避免留下空文件导致 i18n 全部回退成原始 key。
 seedI18nFile() {
     local lang="$1"
-    local out="${HIHY_I18N_DIR}/hy2.sh.${lang}.json"
+    local out="${HIHY_I18N_DIR}/ty.sh.${lang}.json"
     [ -s "$out" ] && return 0
     refreshI18nFile "$lang"
     if [ ! -s "$out" ] || ! grep -q '"schema_version"' "$out" 2>/dev/null; then
@@ -104,8 +104,8 @@ i18nValueFromFile() {
 
 i18nLookup() {
     local key="$1"
-    local lang_file="${HIHY_I18N_DIR}/hy2.sh.${HIHY_LANG}.json"
-    local en_file="${HIHY_I18N_DIR}/hy2.sh.en.json"
+    local lang_file="${HIHY_I18N_DIR}/ty.sh.${HIHY_LANG}.json"
+    local en_file="${HIHY_I18N_DIR}/ty.sh.en.json"
     local value
 
     if [ -f "$lang_file" ]; then
@@ -312,7 +312,7 @@ show_menu() {
 
     echo -e " \033[1;36m╭───────────────────────────────────────────╮\033[0m"
     menuBoxLine "$(i18n menu_title) ${hihyV}"
-    menuBoxLine "https://github.com/chenlee86/Hi_Hysteria"
+    menuBoxLine "https://github.com/chenlee86/tytysteria"
     echo -e " \033[1;36m╰───────────────────────────────────────────╯\033[0m"
 
     # 状态行:服务状态 + 内核版本
