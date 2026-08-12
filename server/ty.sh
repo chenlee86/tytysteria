@@ -22,7 +22,7 @@ HIHY_VERSION_STATUS_FILE="${HIHY_VERSION_STATUS_FILE:-$HIHY_ROOT_DIR/result/vers
 HIHY_VERSION_CHECK_LOCK_FILE="${HIHY_VERSION_CHECK_LOCK_FILE:-$HIHY_ROOT_DIR/result/version-check.lock}"
 HIHY_VERSION_CHECK_TTL="${HIHY_VERSION_CHECK_TTL:-21600}"
 HIHY_REMOTE_CONNECT_TIMEOUT="${HIHY_REMOTE_CONNECT_TIMEOUT:-2}"
-HIHY_REMOTE_MAX_TIME="${HIHY_REMOTE_MAX_TIME:-5}"
+HIHY_REMOTE_MAX_TIME="${HIHY_REMOTE_MAX_TIME:-15}"
 HIHY_RULESET_MIRROR="${HIHY_RULESET_MIRROR:-https://cdn.jsdelivr.net/gh}"
 
 # ----- 10-i18n.sh -----
@@ -433,9 +433,9 @@ downloadToFile() {
     local output_path="$2"
 
     if command -v wget >/dev/null 2>&1; then
-        wget -q -O "$output_path" "$url"
+        wget -q -O "$output_path" --timeout=15 --tries=6 "$url" || { rm -f "$output_path"; return 1; }
     elif command -v curl >/dev/null 2>&1; then
-        curl -fsSL -o "$output_path" "$url"
+        curl --connect-timeout 8 --max-time 40 --retry 6 --retry-all-errors --http1.1 -fsSL -o "$output_path" "$url" || { rm -f "$output_path"; return 1; }
     else
         return 1
     fi
@@ -446,7 +446,7 @@ fetchRemoteBodyFromSources() {
     local response
 
     for url in "$@"; do
-        if response=$(curl -fsSL --connect-timeout "$HIHY_REMOTE_CONNECT_TIMEOUT" --max-time "$HIHY_REMOTE_MAX_TIME" "$url" 2>/dev/null); then
+        if response=$(curl -fsSL --connect-timeout "$HIHY_REMOTE_CONNECT_TIMEOUT" --max-time "$HIHY_REMOTE_MAX_TIME" --retry 3 --retry-all-errors --http1.1 "$url" 2>/dev/null); then
             printf '%s' "$response"
             return 0
         fi
@@ -460,7 +460,7 @@ fetchRemoteHeadersFromSources() {
     local response
 
     for url in "$@"; do
-        if response=$(curl -fsSI --connect-timeout "$HIHY_REMOTE_CONNECT_TIMEOUT" --max-time "$HIHY_REMOTE_MAX_TIME" "$url" 2>/dev/null); then
+        if response=$(curl -fsSI --connect-timeout "$HIHY_REMOTE_CONNECT_TIMEOUT" --max-time "$HIHY_REMOTE_MAX_TIME" --retry 3 --retry-all-errors --http1.1 "$url" 2>/dev/null); then
             printf '%s' "$response"
             return 0
         fi
@@ -2668,9 +2668,9 @@ downloadHysteriaCore() {
     local temp_bin="/etc/hihy/bin/.appS.tmp.$$"
 
     if command -v wget >/dev/null 2>&1; then
-        wget -q -O "$temp_bin" --no-check-certificate "$download_url" &
+        wget -q -O "$temp_bin" --no-check-certificate --timeout=15 --tries=6 "$download_url" &
     elif command -v curl >/dev/null 2>&1; then
-        curl -fsSL -o "$temp_bin" "$download_url" &
+        curl --connect-timeout 8 --max-time 40 --retry 6 --retry-all-errors --http1.1 -fsSL -o "$temp_bin" "$download_url" &
     else
         echoColor red "$(i18n network_error_cannot_connect_github)"
         return 1
