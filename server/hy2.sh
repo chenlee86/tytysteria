@@ -30,7 +30,7 @@ loadPersistedLanguage() {
     if [ -f "$HIHY_I18N_CONF" ] && [ -z "$HIHY_LANG" ]; then
         HIHY_LANG=$(grep -E '^HIHY_LANG=' "$HIHY_I18N_CONF" | tail -n 1 | cut -d'=' -f2-)
     fi
-    HIHY_LANG="${HIHY_LANG:-en}"
+    HIHY_LANG="${HIHY_LANG:-zh}"
 }
 
 savePersistedLanguage() {
@@ -64,6 +64,26 @@ refreshI18nFile() {
     elif command -v curl >/dev/null 2>&1; then
         curl -fsSL -o "$out" "$url" 2>/dev/null
     fi
+}
+
+# 首次播种:全新机器上语言文件尚不存在时,同步拉取一次(原 install.sh 的职责)。
+# 下载失败或内容非法则清掉半成品,避免留下空文件导致 i18n 全部回退成原始 key。
+seedI18nFile() {
+    local lang="$1"
+    local out="${HIHY_I18N_DIR}/hy2.sh.${lang}.json"
+    [ -s "$out" ] && return 0
+    refreshI18nFile "$lang"
+    if [ ! -s "$out" ] || ! grep -q '"schema_version"' "$out" 2>/dev/null; then
+        rm -f "$out"
+        return 1
+    fi
+}
+
+# 确保当前语言(及 en 回退)的文案文件就位,供菜单渲染
+ensureI18nSeeded() {
+    seedI18nFile "$HIHY_LANG"
+    [ "$HIHY_LANG" != "en" ] && seedI18nFile "en"
+    return 0
 }
 
 # 按 key 读取 JSON 字符串；返回空表示未找到
@@ -4846,6 +4866,7 @@ menu() {
 
 if [ "${BASH_SOURCE[0]}" = "$0" ]; then
     loadPersistedLanguage
+    ensureI18nSeeded
     checkRoot
     case "${1:-}" in
         install | 1)
