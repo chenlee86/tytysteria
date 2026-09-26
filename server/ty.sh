@@ -907,7 +907,7 @@ getLatestHihyVersion() {
 getLatestHysteriaVersion() {
     local headers
 
-    headers=$(fetchRemoteHeadersFromSources "https://github.com/apernet/hysteria/releases/latest") || return 1
+    headers=$(fetchRemoteHeadersFromSources "https://github.com/HyNetworks/hysteria/releases/latest") || return 1
     printf '%s\n' "$headers" | grep -i '^location:' | grep -o 'tag/[^[:space:]]*' | sed 's/tag\///;s/\r//;s/ //g' | head -n 1
 }
 
@@ -2661,7 +2661,7 @@ downloadHysteriaCore() {
         echoColor yellowBlack "$(i18n unsupported_arch "$(uname -m)")"
         return 1
     fi
-    local download_url="https://github.com/apernet/hysteria/releases/download/${version}/hysteria-linux-${arch}"
+    local download_url="https://github.com/HyNetworks/hysteria/releases/download/${version}/hysteria-linux-${arch}"
 
     # 下载到临时文件,校验后原子替换,避免失败时破坏现有可用内核
     mkdir -p /etc/hihy/bin
