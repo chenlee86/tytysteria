@@ -59,24 +59,28 @@ refreshI18nFile() {
     mkdir -p "$HIHY_I18N_DIR"
     local url="${base_url}/server/i18n/${lang}.json"
     local out="${HIHY_I18N_DIR}/ty.sh.${lang}.json"
+    local tmp="${out}.tmp.$$"
     if command -v wget >/dev/null 2>&1; then
-        wget -q --no-check-certificate -O "$out" "$url" 2>/dev/null
+        wget -q --no-check-certificate -T 10 -t 2 -O "$tmp" "$url" 2>/dev/null
     elif command -v curl >/dev/null 2>&1; then
-        curl -fsSL -o "$out" "$url" 2>/dev/null
+        curl -fsSL --connect-timeout 5 --max-time 15 -o "$tmp" "$url" 2>/dev/null
+    fi
+    # 下载失败或内容非法则丢弃临时文件,保留原有语言文件
+    if [ -s "$tmp" ] && grep -q '"schema_version"' "$tmp" 2>/dev/null; then
+        mv -f "$tmp" "$out"
+    else
+        rm -f "$tmp"
+        return 1
     fi
 }
 
-# 首次播种:全新机器上语言文件尚不存在时,同步拉取一次(原 install.sh 的职责)。
-# 下载失败或内容非法则清掉半成品,避免留下空文件导致 i18n 全部回退成原始 key。
+# 每次运行都同步刷新一次语言文件,保证提示文案(如默认值)与脚本同步;
+# 刷新失败时沿用本地已有文件,只有本地也没有时才返回失败。
 seedI18nFile() {
     local lang="$1"
     local out="${HIHY_I18N_DIR}/ty.sh.${lang}.json"
-    [ -s "$out" ] && return 0
-    refreshI18nFile "$lang"
-    if [ ! -s "$out" ] || ! grep -q '"schema_version"' "$out" 2>/dev/null; then
-        rm -f "$out"
-        return 1
-    fi
+    refreshI18nFile "$lang" && return 0
+    [ -s "$out" ]
 }
 
 # 确保当前语言(及 en 回退)的文案文件就位,供菜单渲染
