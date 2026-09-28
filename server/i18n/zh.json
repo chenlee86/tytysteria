@@ -154,7 +154,7 @@
   "core_download_invalid": "下载的内核不是有效的二进制文件（镜像返回了错误页？）。已保留旧内核，请重试。",
   "core_downloading": "下载中...",
   "delay_label": "延迟:",
-  "delay_prompt": "(5/13)请输入您到此服务器的平均延迟,用于 Brutal 模式下估算 QUIC 窗口(默认200,单位:ms):",
+  "delay_prompt": "(5/13)请输入您到此服务器的平均延迟,用于 Brutal 模式下估算 QUIC 窗口(默认160,单位:ms):",
   "delete_success": "删除成功",
   "detecting_domain_dns": "检测%s,DNS解析...",
   "dns_acme_summary": "您选择使用acme dns验证申请证书: ",

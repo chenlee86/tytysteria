@@ -1898,7 +1898,7 @@ collectHysteriaConfig() {
             echoColor green "$(i18n delay_prompt)"
             read -r delay
             if [ -z "${delay}" ]; then
-                delay=200
+                delay=160
             fi
             if ! isPositiveInt "${delay}" || [ "${delay}" -eq 0 ]; then
                 echoColor red "$(i18n bandwidth_invalid_error)"

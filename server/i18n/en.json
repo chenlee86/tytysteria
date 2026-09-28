@@ -154,7 +154,7 @@
   "core_download_invalid": "Downloaded core is not a valid binary (mirror returned an error page?). Old core kept, please retry.",
   "core_downloading": "Downloading...",
   "delay_label": "Latency: ",
-  "delay_prompt": "(5/13) Please enter average latency to this server, used by Brutal mode to estimate QUIC window (default 200, unit: ms):",
+  "delay_prompt": "(5/13) Please enter average latency to this server, used by Brutal mode to estimate QUIC window (default 160, unit: ms):",
   "delete_success": "Deleted successfully",
   "detecting_domain_dns": "Checking %s, DNS resolution...",
   "dns_acme_summary": "You selected ACME DNS validation to apply for certificate: ",
