@@ -1912,7 +1912,7 @@ collectHysteriaConfig() {
             echoColor green "$(i18n download_prompt)"
             read -r download
             if [ -z "${download}" ]; then
-                download=50
+                download=200
             fi
             if ! isPositiveInt "${download}" || [ "${download}" -eq 0 ]; then
                 echoColor red "$(i18n bandwidth_invalid_error)"
@@ -1925,7 +1925,7 @@ collectHysteriaConfig() {
             echoColor green "$(i18n upload_prompt)"
             read -r upload
             if [ -z "${upload}" ]; then
-                upload=10
+                upload=20
             fi
             if ! isPositiveInt "${upload}" || [ "${upload}" -eq 0 ]; then
                 echoColor red "$(i18n bandwidth_invalid_error)"
@@ -1934,19 +1934,19 @@ collectHysteriaConfig() {
             break
         done
         echo -e "\n->$(i18n upload_label)$(echoColor red "${upload}")mbps\n"
-        # Brutal 速率补偿开关(hysteria v2.10.0+):默认保持开启
+        # Brutal 速率补偿开关(hysteria v2.10.0+):默认关闭补偿
         echoColor green "$(i18n losscomp_prompt)"
         echoColor white "$(i18n losscomp_hint)"
         echoColor yellow "$(i18n losscomp_choice_keep_default)"
         echoColor yellow "$(i18n losscomp_choice_disable)"
         echoColor green "$(i18n prompt_enter_number)"
         read -r losscomp_num
-        if [ "${losscomp_num}" == "2" ]; then
-            brutal_disable_loss_comp="true"
-            echo -e "\n->$(i18n losscomp_disabled_label)\n"
-        else
+        if [ "${losscomp_num}" == "1" ]; then
             brutal_disable_loss_comp="false"
             echo -e "\n->$(i18n losscomp_kept_label)\n"
+        else
+            brutal_disable_loss_comp="true"
+            echo -e "\n->$(i18n losscomp_disabled_label)\n"
         fi
     else
         delay=""
